@@ -21,12 +21,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "TDS_MVC_TB_MERCADO")
+@Table(name = "TDS_Sec_MVC_TB_Mercado")
 public class Produto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_MERCADO_MVC")
-    @SequenceGenerator(name = "SQ_MERCADO_MVC", sequenceName = "SQ_TDS_MVC_MERCADO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 

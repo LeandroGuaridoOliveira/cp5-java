@@ -1,23 +1,19 @@
-INTEGRANTES DO GRUPO (CHECKPOINT 4 - PARTE 2):
+INTEGRANTES DO GRUPO (CHECKPOINT 5 - PARTE 1):
 1. Nome: Leandro Guarido de Oliveira - RM: 561760
 2. Nome: Kaiky Costa - RM: 564578
 3. Nome: Gabriel Costa Solano - RM: 562325
 
 TURMA: 2TDSPV
-
 CURSO: Tecnologia em Analise e Desenvolvimento de Sistemas (TDS) - FIAP
 PROFESSOR: Dr. Marcel Stefan Wagner
 
 IDE UTILIZADA: IntelliJ IDEA
 
-LINK DO REPOSITORIO GITHUB (PARTE 2 - SEPARADO DA PARTE 1):
-https://github.com/LeandroGuaridoOliveira/Java-gs4-pt2.git
+LINK DO REPOSITORIO GITHUB (PROJETO SPRING SECURITY MVC):
+https://github.com/LeandroGuaridoOliveira/cp5-java.git
 
 LINK DO DEPLOY EM PRODUCAO:
 https://mercado-express-mvc-90ft.onrender.com
 
 SISTEMA / PLATAFORMA UTILIZADA PARA O DEPLOY:
 Render (Web Service baseado em container Docker)
-
-LINK DO VIDEO DE APRESENTACAO (APROXIMADAMENTE 5 MINUTOS):
-https://youtu.be/l_vcf0Vck1M

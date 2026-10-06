@@ -1,7 +1,9 @@
 package br.com.fiap.mercadomvc.config;
 
 import br.com.fiap.mercadomvc.model.Produto;
+import br.com.fiap.mercadomvc.model.Role;
 import br.com.fiap.mercadomvc.repository.ProdutoRepository;
+import br.com.fiap.mercadomvc.service.UsuarioService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +13,33 @@ import java.util.List;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final ProdutoRepository produtoRepository;
+    private final UsuarioService usuarioService;
 
-    public DatabaseSeeder(ProdutoRepository produtoRepository) {
+    public DatabaseSeeder(ProdutoRepository produtoRepository, UsuarioService usuarioService) {
         this.produtoRepository = produtoRepository;
+        this.usuarioService = usuarioService;
     }
 
     @Override
     public void run(String... args) {
+        // Carga inicial de usuários na tabela TDS_Users_Mercado
+        if (usuarioService.totalUsuarios() == 0) {
+            usuarioService.salvarUsuarioSeeder(
+                "Administrador Geral",
+                "admin",
+                "admin123",
+                Role.ROLE_ADMIN
+            );
+
+            usuarioService.salvarUsuarioSeeder(
+                "Usuário Operador",
+                "usuario",
+                "user123",
+                Role.ROLE_USER
+            );
+        }
+
+        // Carga inicial de produtos na tabela TDS_Sec_MVC_TB_Mercado
         if (produtoRepository.count() == 0) {
             produtoRepository.saveAll(List.of(
                 new Produto("Sabão em Pó Omo Lavagem Perfeita", "Produto de Limpeza", "Limpeza", "1.6kg", 24.90),

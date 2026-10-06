@@ -48,9 +48,16 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-3 fw-bold">
+            <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-2 fw-bold">
                 <i class="bi bi-box-arrow-in-right me-1"></i> Entrar no Sistema
             </button>
+
+            <div class="text-center my-3">
+                <span class="text-muted small">Não possui uma conta?</span>
+                <a th:href="@{/registro}" class="text-decoration-none fw-bold small text-success ms-1">
+                    <i class="bi bi-person-plus-fill me-1"></i>Cadastre-se (Sign Up)
+                </a>
+            </div>
 
             <a th:href="@{/}" class="btn btn-outline-secondary w-100 py-2 small">
                 <i class="bi bi-arrow-left me-1"></i> Voltar à Página Inicial
