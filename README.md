@@ -152,24 +152,54 @@ Novos usuários cadastrados pela tela de **Sign Up** (`/registro`) são salvos d
 
 ---
 
-## Fluxo da Aplicação
+## Fluxo da Aplicação e Telas do Sistema
 
-1. **Landing Page (`index.html`)**:
-   - Apresenta métricas em tempo real, produtos em destaque e links de acesso direto ao catálogo, login ou cadastro.
-2. **Tela de Login Customizada (`login.html`)**:
-   - Totalmente integrada com Bootstrap 5.3, sem utilizar o formulário padrão do Spring Security.
-   - Apresenta alertas de erro e logout, além de link direto para a tela de **Sign Up**.
-3. **Tela de Sign Up / Cadastro (`registro.html`)**:
-   - Permite que qualquer novo usuário realize seu cadastro informando nome, login, senha, confirmação de senha e perfil.
-   - Persiste as credenciais com criptografia BCrypt na tabela `TDS_Users_Mercado`.
-4. **Área Restrita (`area-restrita.html`)**:
-   - Redirecionamento configurado em `defaultSuccessUrl("/area-restrita", true)`.
-   - Exibe o painel com identificação do usuário logado, badge de perfil (`ROLE_ADMIN` ou `ROLE_USER`), detalhamento das permissões, contadores de produtos e atalhos operacionais rápidos.
-5. **CRUD Completo de Produtos**:
-   - **Create**: Formulário com validação Jakarta em `/produtos/novo`.
-   - **Read**: Tabela com filtros de pesquisa por nome em `/produtos` e tela de detalhes em `/produtos/detalhes/{id}`.
-   - **Update**: Edição com formulário pré-preenchido em `/produtos/editar/{id}`.
-   - **Delete**: Exclusão protegida em `/produtos/excluir/{id}` (restrita ao Administrador).
+### 1. Landing Page (`index.html`)
+Página inicial do sistema servida na rota raiz `/`. Apresenta banner de apresentação, contadores em tempo real (total de produtos cadastrados e preço médio calculado dinamicamente), tabela de produtos em destaque e links diretos para o catálogo completo, tela de login ou cadastro (Sign Up).
+
+![Landing Page](./docs/screenshots/01_landing_page.png)
+
+---
+
+### 2. Tela de Login Customizada (`login.html`)
+Implementada em conformidade com o requisito do professor de possuir uma tela de login própria, customizada com Bootstrap 5.3 e integrada ao fluxo de autenticação do Spring Security com proteção CSRF. Contém mensagens contextuais de erro e logout, credenciais de teste documentadas e link direto para cadastro de novos usuários.
+
+![Tela de Login](./docs/screenshots/02_login.png)
+
+---
+
+### 3. Tela de Cadastro de Usuário - Sign Up (`registro.html`)
+Permite o autorregistro de usuários no sistema, atendendo ao requisito de direcionar usuários sem conta para uma tela de Sign In / Sign Up. Os dados são validados via Jakarta Validation e persistidos na tabela `TDS_Users_Mercado` com a senha criptografada via `BCryptPasswordEncoder`.
+
+![Cadastro de Usuário](./docs/screenshots/03_registro_signup.png)
+
+---
+
+### 4. Área Restrita pós-Login (`area-restrita.html`)
+Após a autenticação bem-sucedida, o Spring Security redireciona o usuário para a rota `/area-restrita`. A interface exibe saudação personalizada com o nome do usuário logado, badge de identificação do perfil (`ROLE_ADMIN` ou `ROLE_USER`), detalhamento das permissões concedidas, métricas consolidadas do estoque e atalhos rápidos operacionais.
+
+![Área Restrita](./docs/screenshots/04_area_restrita.png)
+
+---
+
+### 5. Catálogo de Produtos - Listagem e Busca (`produtos/lista.html`)
+Interface principal de gerenciamento do estoque contemplando a operação **Read** do CRUD. Exibe tabela responsiva com todos os itens cadastrados no PostgreSQL, badges de categorização por setor (Limpeza, Hortifruti, Vestuário, Brinquedos), barra de pesquisa dinâmica por nome e botões de ação para cada item (Visualizar Detalhes, Editar e Excluir).
+
+![Catálogo de Produtos](./docs/screenshots/05_catalogo_produtos.png)
+
+---
+
+### 6. Cadastro e Edição de Produtos - Create e Update (`produtos/formulario.html`)
+Formulário unificado para inserção de novos produtos (`/produtos/novo`) e edição de itens existentes (`/produtos/editar/{id}`). Contém validação completa de campos obrigatórios (`@NotBlank`, `@Positive`, tamanhos e formatações monetárias), persistindo as alterações diretamente na tabela `TDS_Sec_MVC_TB_Mercado`.
+
+![Formulário de Produto](./docs/screenshots/06_formulario_produto.png)
+
+---
+
+### 7. Detalhes do Produto (`produtos/detalhes.html`)
+Ficha técnica completa do produto selecionado, exibindo código, setor, tipo, tamanho/embalagem, preço unitário formatado e indicação da tabela mapeada no banco PostgreSQL (`TDS_Sec_MVC_TB_Mercado`).
+
+![Detalhes do Produto](./docs/screenshots/07_detalhes_produto.png)
 
 ---
 
