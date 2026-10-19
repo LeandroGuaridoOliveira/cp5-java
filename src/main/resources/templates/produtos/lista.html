@@ -67,14 +67,15 @@
                             <th>Produto</th>
                             <th>Tipo</th>
                             <th>Setor</th>
-                            <th>Tamanho / Embalagem</th>
+                            <th>Tamanho</th>
+                            <th>Estoque</th>
                             <th>Preço Unitário</th>
                             <th class="text-end pe-4">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:if="${#lists.isEmpty(produtos)}">
-                            <td colspan="7" class="text-center py-5 text-muted">
+                            <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox display-4 d-block mb-2 text-secondary"></i>
                                 Nenhum produto encontrado no estoque.
                             </td>
@@ -99,10 +100,18 @@
                             </td>
                             <td th:text="${p.tamanho != null and !p.tamanho.isEmpty() ? p.tamanho : '-'}">Tamanho</td>
                             <td>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1"
+                                      th:text="${p.estoque} + ' un.'">50 un.</span>
+                            </td>
+                            <td>
                                 <span class="fw-bold text-success fs-6" th:text="'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
                             </td>
                             <td class="text-end pe-4">
                                 <div class="btn-group btn-group-sm" role="group">
+                                    <a th:href="@{/carrinho/adicionar-rapido/{id}(id=${p.id})}" class="btn btn-outline-success" title="Adicionar ao Carrinho">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </a>
+
                                     <a th:href="@{/produtos/detalhes/{id}(id=${p.id})}" class="btn btn-outline-info" title="Ver Detalhes">
                                         <i class="bi bi-eye"></i>
                                     </a>

@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Mercado Express & Banco Tranquilo - CP5 Parte 2 (RabbitMQ + API + Email)",
+    "_postman_id": "c8f92b10-5c41-4a7e-9b2a-cp5parte2fiap",
+    "description": "Coleção oficial de testes para o Checkpoint 5 Parte 2 (FIAP - 2TDSPV). Contém requisições JSON de compra para a API do Mercado Express integrada ao Banco Tranquilo via RabbitMQ.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Status da API Banco Tranquilo e Queues RabbitMQ",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/banco-tranquilo/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "banco-tranquilo", "status"]
+        }
+      }
+    },
+    {
+      "name": "2. Realizar Compra Aprovada (PIX -> RabbitMQ -> Banco Tranquilo -> E-mail + PostgreSQL)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"Leandro Guarido de Oliveira\",\n  \"emailCliente\": \"leandro.guarido@fiap.com.br\",\n  \"cpfCliente\": \"123.456.789-00\",\n  \"metodoPagamento\": \"PIX\",\n  \"numeroCartao\": \"\",\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    },\n    {\n      \"produtoId\": 3,\n      \"quantidade\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/compras",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "compras"]
+        }
+      }
+    },
+    {
+      "name": "3. Realizar Compra Aprovada (Cartão de Crédito)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"Kaiky Costa\",\n  \"emailCliente\": \"kaiky.costa@fiap.com.br\",\n  \"cpfCliente\": \"234.567.890-11\",\n  \"metodoPagamento\": \"CARTAO_CREDITO\",\n  \"numeroCartao\": \"5432 1098 7654 4589\",\n  \"itens\": [\n    {\n      \"produtoId\": 6,\n      \"quantidade\": 1\n    },\n    {\n      \"produtoId\": 4,\n      \"quantidade\": 3\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/compras",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "compras"]
+        }
+      }
+    },
+    {
+      "name": "4. Realizar Compra Recusada pelo Banco Tranquilo (Cartão Final 0000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"Cliente Teste Recusa\",\n  \"emailCliente\": \"recusa@fiap.com.br\",\n  \"cpfCliente\": \"999.888.777-66\",\n  \"metodoPagamento\": \"CARTAO_CREDITO\",\n  \"numeroCartao\": \"5432 1098 7654 0000\",\n  \"itens\": [\n    {\n      \"produtoId\": 7,\n      \"quantidade\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/compras",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "compras"]
+        }
+      }
+    },
+    {
+      "name": "5. Consultar Todas as Compras no PostgreSQL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/compras",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "compras"]
+        }
+      }
+    },
+    {
+      "name": "6. Consultar Controle de E-mails Enviados no PostgreSQL (TDS_TB_Emails_Enviados)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/emails",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "emails"]
+        }
+      }
+    }
+  ]
+}

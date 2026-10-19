@@ -1,4 +1,4 @@
-INTEGRANTES DO GRUPO (CHECKPOINT 5 - PARTE 1):
+INTEGRANTES DO GRUPO (CHECKPOINT 5 - PARTE 1 E PARTE 2):
 1. Nome: Leandro Guarido de Oliveira - RM: 561760
 2. Nome: Kaiky Costa - RM: 564578
 3. Nome: Gabriel Costa Solano - RM: 562325
@@ -9,7 +9,7 @@ PROFESSOR: Dr. Marcel Stefan Wagner
 
 IDE UTILIZADA: IntelliJ IDEA
 
-LINK DO REPOSITORIO GITHUB (PROJETO SPRING SECURITY MVC):
+LINK DO REPOSITORIO GITHUB (PROJETO COMPLETO - PARTE 1 E PARTE 2):
 https://github.com/LeandroGuaridoOliveira/cp5-java.git
 
 LINK DO DEPLOY EM PRODUCAO:
@@ -17,3 +17,49 @@ https://mercado-express-mvc-90ft.onrender.com
 
 SISTEMA / PLATAFORMA UTILIZADA PARA O DEPLOY:
 Render (Web Service baseado em container Docker)
+
+========================================================================
+INFORMACOES DA PARTE 2 (MICROSSERVICOS, RABBITMQ, API BANCO TRANQUILO E E-MAIL):
+========================================================================
+1. CONFIGURACAO DO BANCO DE DADOS POSTGRESQL (application.yml):
+   - URL JDBC: jdbc:postgresql://localhost:5432/mercado_db
+   - Usuario: postgres
+   - Senha: postgres
+   - Driver: org.postgresql.Driver
+   - Tabelas Mapeadas:
+     * TDS_Sec_MVC_TB_Mercado (Produtos e Controle de Estoque)
+     * TDS_Users_Mercado (Usuarios e Perfis Spring Security)
+     * TDS_TB_Compras_Mercado (Transacoes e Respostas da API do Banco Tranquilo)
+     * TDS_TB_Emails_Enviados (Controle e Auditoria de E-mails Enviados aos Clientes)
+
+2. CONFIGURACAO DO BROKER RABBITMQ:
+   - Host: localhost | Porta AMQP: 5672 | Dashboard Management: http://localhost:15672 (guest / guest)
+   - Exchange (Direct): mercado.banco.exchange
+   - Queue de Requisicao: banco.tranquilo.pagamento.requisicao.queue (Routing Key: banco.pagamento.requisicao)
+   - Queue de Resposta: banco.tranquilo.pagamento.resposta.queue (Routing Key: banco.pagamento.resposta)
+
+3. EXEMPLO DE REQUISICAO DE COMPRA EM JSON PARA POSTMAN / INSOMNIA:
+   - Metodo: POST
+   - Endpoint: http://localhost:8082/api/compras
+   - Header: Content-Type: application/json
+   - Body (JSON):
+{
+  "nomeCliente": "Leandro Guarido de Oliveira",
+  "emailCliente": "leandro.guarido@fiap.com.br",
+  "cpfCliente": "123.456.789-00",
+  "metodoPagamento": "PIX",
+  "numeroCartao": "",
+  "itens": [
+    {
+      "produtoId": 1,
+      "quantidade": 2
+    },
+    {
+      "produtoId": 3,
+      "quantidade": 1
+    }
+  ]
+}
+
+4. LINK DO VIDEO DEMONSTRATIVO (5 A 7 MINUTOS - YOUTUBE NAO LISTADO):
+   [INSERIR_LINK_DO_VIDEO_AQUI]

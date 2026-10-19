@@ -53,20 +53,33 @@ public class Produto {
     @Column(name = "PRECO", nullable = false)
     private Double preco;
 
+    @Column(name = "ESTOQUE", nullable = false)
+    private Integer estoque = 50;
+
     public Produto() {
+        this.estoque = 50;
     }
 
     public Produto(Long id, String nome, String tipo, String setor, String tamanho, Double preco) {
+        this(id, nome, tipo, setor, tamanho, preco, 50);
+    }
+
+    public Produto(Long id, String nome, String tipo, String setor, String tamanho, Double preco, Integer estoque) {
         this.id = id;
         this.nome = nome;
         this.tipo = tipo;
         this.setor = setor;
         this.tamanho = tamanho;
         this.preco = preco;
+        this.estoque = estoque != null ? estoque : 50;
     }
 
     public Produto(String nome, String tipo, String setor, String tamanho, Double preco) {
-        this(null, nome, tipo, setor, tamanho, preco);
+        this(null, nome, tipo, setor, tamanho, preco, 50);
+    }
+
+    public Produto(String nome, String tipo, String setor, String tamanho, Double preco, Integer estoque) {
+        this(null, nome, tipo, setor, tamanho, preco, estoque);
     }
 
     public Long getId() {
@@ -115,5 +128,13 @@ public class Produto {
 
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    public Integer getEstoque() {
+        return estoque != null ? estoque : 0;
+    }
+
+    public void setEstoque(Integer estoque) {
+        this.estoque = estoque != null ? estoque : 0;
     }
 }

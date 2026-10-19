@@ -30,10 +30,12 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/produtos", "/produtos/detalhes/**").permitAll()
+                .requestMatchers("/carrinho/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
                 .requestMatchers("/login", "/registro").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/area-restrita/**").authenticated()
+                .requestMatchers("/area-restrita/**", "/dashboard-gerencia/**").authenticated()
                 .requestMatchers("/produtos/novo", "/produtos/salvar").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/produtos/editar/**", "/produtos/atualizar/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/produtos/excluir/**").hasRole("ADMIN")
@@ -52,7 +54,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/api/**"))
             .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();

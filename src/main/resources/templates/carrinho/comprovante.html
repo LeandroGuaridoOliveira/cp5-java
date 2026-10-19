@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprovante Banco Tranquilo - Mercado Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="container my-5 main-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-custom p-4 p-md-5 bg-white shadow">
+                    <div class="text-center border-bottom pb-4 mb-4">
+                        <div th:if="${compra.statusPagamento.name() == 'APROVADO'}" class="d-inline-flex bg-success-subtle text-success p-3 rounded-circle display-5 mb-3">
+                            <i class="bi bi-patch-check-fill"></i>
+                        </div>
+                        <div th:if="${compra.statusPagamento.name() == 'RECUSADO'}" class="d-inline-flex bg-danger-subtle text-danger p-3 rounded-circle display-5 mb-3">
+                            <i class="bi bi-x-octagon-fill"></i>
+                        </div>
+
+                        <h2 class="fw-bold mb-1" th:text="${compra.statusPagamento.name() == 'APROVADO' ? 'Pagamento Confirmado pelo Banco Tranquilo!' : 'Pagamento Recusado pelo Banco Tranquilo'}">
+                            Status do Pagamento
+                        </h2>
+                        <p class="text-muted mb-2" th:text="${compra.mensagemBanco}">Mensagem da instituição bancária</p>
+
+                        <span class="badge fs-6 px-3 py-2"
+                              th:classappend="${compra.statusPagamento.name() == 'APROVADO' ? 'bg-success' : 'bg-danger'}"
+                              th:text="'Status: ' + ${compra.statusPagamento}">APROVADO</span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted text-uppercase fw-bold d-block">Código da Transação</small>
+                                <strong class="fs-5 text-dark" th:text="${compra.codigoTransacao}">TRX-0000</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted text-uppercase fw-bold d-block">Protocolo API Banco Tranquilo</small>
+                                <strong class="fs-5 text-primary" th:text="${compra.protocoloBanco}">BT-0000</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted text-uppercase fw-bold d-block">Cliente / Destinatário</small>
+                                <strong class="text-dark d-block" th:text="${compra.nomeCliente}">Cliente</strong>
+                                <span class="small text-muted" th:text="${compra.emailCliente}">email@cliente.com</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted text-uppercase fw-bold d-block">Valor Total &amp; Método</small>
+                                <strong class="fs-5 text-success" th:text="'R$ ' + ${#numbers.formatDecimal(compra.valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
+                                <span class="badge bg-secondary ms-2" th:text="${compra.metodoPagamento}">PIX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded border mb-4">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Itens Comprados no Mercado Express</small>
+                        <div class="fw-semibold text-dark" th:text="${compra.itensResumo}">Itens</div>
+                    </div>
+
+                    <div th:if="${compra.emailEnviado}" class="alert alert-info d-flex align-items-center mb-4">
+                        <i class="bi bi-envelope-check-fill fs-3 me-3 text-primary"></i>
+                        <div>
+                            <strong>Aviso de Confirmação de Pagamento Enviado por E-mail!</strong>
+                            <div class="small">
+                                Um e-mail de confirmação foi disparado para <strong th:text="${compra.emailCliente}"></strong> e registrado na tabela <code>TDS_TB_Emails_Enviados</code> no PostgreSQL.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded bg-dark text-light small mb-4">
+                        <div class="fw-bold text-warning mb-1"><i class="bi bi-boxes me-1"></i> Rastreabilidade RabbitMQ &amp; Banco de Dados:</div>
+                        <div>• Exchange: <code class="text-info" th:text="${exchangeName}"></code></div>
+                        <div>• Queue Requisição: <code class="text-info" th:text="${queueReq}"></code></div>
+                        <div>• Queue Resposta: <code class="text-info" th:text="${queueResp}"></code></div>
+                        <div>• Tabelas PostgreSQL atualizadas: <code>TDS_TB_Compras_Mercado</code>, <code>TDS_TB_Emails_Enviados</code> e <code>TDS_Sec_MVC_TB_Mercado</code></div>
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-between gap-2">
+                        <a th:href="@{/carrinho}" class="btn btn-outline-secondary">
+                            <i class="bi bi-cart-plus me-1"></i> Nova Compra
+                        </a>
+                        <a th:href="@{/dashboard-gerencia}" class="btn btn-success fw-bold">
+                            <i class="bi bi-bar-chart-line-fill me-1"></i> Abrir Dashboard da Gerência
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

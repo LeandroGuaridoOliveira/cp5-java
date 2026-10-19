@@ -15,7 +15,7 @@
     <artifactId>mercado-express-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mercado-express-mvc</name>
-    <description>Checkpoint 5 Parte 1 - Spring MVC com Thymeleaf, Spring Security, Deploy e PostgreSQL</description>
+    <description>Checkpoint 5 Parte 1 e Parte 2 - Spring Security MVC, Microsserviços, RabbitMQ, API Banco Tranquilo, E-mail e Dashboard</description>
 
     <properties>
         <java.version>17</java.version>
@@ -53,6 +53,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -84,6 +94,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

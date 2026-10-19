@@ -97,17 +97,17 @@
                         </div>
 
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="tamanho" class="form-label fw-bold">Tamanho / Embalagem</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-aspect-ratio"></i></span>
                                     <input type="text" class="form-control" id="tamanho" th:field="*{tamanho}" 
-                                           placeholder="Ex: 1kg, 500ml, 38-42, Único">
+                                           placeholder="Ex: 1kg, 500ml, 38-42">
                                 </div>
                                 <small class="text-muted">Opcional (peso, volume ou numeração).</small>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="preco" class="form-label fw-bold">Preço Unitário (R$) <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
@@ -118,6 +118,16 @@
                                         Erro no preço.
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="estoque" class="form-label fw-bold">Quantidade em Estoque</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-boxes"></i></span>
+                                    <input type="number" min="0" class="form-control" id="estoque" th:field="*{estoque}" 
+                                           placeholder="50">
+                                </div>
+                                <small class="text-muted">Controle para o Dashboard Gerencial.</small>
                             </div>
                         </div>
 

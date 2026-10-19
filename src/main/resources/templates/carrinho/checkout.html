@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras &amp; Pagamento Banco Tranquilo - Mercado Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="container my-4 main-content">
+        <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${mensagemSucesso}">Sucesso!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${mensagemErro}">Erro!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Banner Arquitetura RabbitMQ + Banco Tranquilo -->
+        <div class="p-4 mb-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, #1b4332 0%, #0f5132 100%);">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge bg-warning text-dark fw-bold">
+                            <i class="bi bi-diagram-3-fill me-1"></i> RabbitMQ Broker Assíncrono
+                        </span>
+                        <span class="badge bg-info text-dark fw-bold">
+                            <i class="bi bi-bank2 me-1"></i> API Banco Tranquilo
+                        </span>
+                        <span class="badge bg-light text-success fw-bold">
+                            <i class="bi bi-envelope-check-fill me-1"></i> Notificação por E-mail + PostgreSQL
+                        </span>
+                    </div>
+                    <h2 class="fw-bold mb-1"><i class="bi bi-cart3 me-2"></i>Carrinho de Compras — Mercado Express</h2>
+                    <p class="mb-0 text-light opacity-75 small">
+                        Adicione produtos ao carrinho e finalize a compra para acionar a fila <code>banco.tranquilo.pagamento.requisicao.queue</code> no RabbitMQ e autorizar o pagamento na API do <strong>Banco Tranquilo</strong>.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <a sec:authorize="isAuthenticated()" th:href="@{/dashboard-gerencia}" class="btn btn-warning fw-bold text-dark">
+                        <i class="bi bi-bar-chart-line-fill me-1"></i> Ver Dashboard da Gerência
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Coluna Esquerda: Adicionar Produto e Lista de Itens do Carrinho -->
+            <div class="col-lg-7">
+                <!-- Card Adicionar Produto ao Carrinho -->
+                <div class="card card-custom p-4 mb-4 bg-white">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-plus-circle-fill text-success me-2"></i>Selecionar Produtos do Estoque
+                    </h5>
+                    <form th:action="@{/carrinho/adicionar}" method="post" class="row g-3 align-items-end">
+                        <div class="col-md-7">
+                            <label for="produtoId" class="form-label small fw-bold text-muted">Produto disponível (TDS_Sec_MVC_TB_Mercado)</label>
+                            <select name="produtoId" id="produtoId" class="form-select" required>
+                                <option th:each="p : ${produtosDisponiveis}"
+                                        th:value="${p.id}"
+                                        th:text="${p.nome} + ' — R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} + ' (Estoque: ' + ${p.estoque} + ')'">
+                                    Produto
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="quantidade" class="form-label small fw-bold text-muted">Qtd.</label>
+                            <input type="number" name="quantidade" id="quantidade" class="form-control" value="1" min="1" max="50" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-success w-100 fw-bold">
+                                <i class="bi bi-cart-plus me-1"></i> Adicionar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Card Itens no Carrinho -->
+                <div class="card card-custom overflow-hidden bg-white">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-bag-check-fill text-primary me-2"></i>Itens no Carrinho
+                            <span class="badge bg-secondary ms-1" th:text="${quantidadeTotal} + ' un.'">0 un.</span>
+                        </h5>
+                        <a th:if="${!#lists.isEmpty(itensCarrinho)}" th:href="@{/carrinho/limpar}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i> Limpar Carrinho
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Produto</th>
+                                    <th class="text-center">Qtd</th>
+                                    <th>Preço Unit.</th>
+                                    <th>Subtotal</th>
+                                    <th class="text-end pe-3">Remover</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(itensCarrinho)}">
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-cart-x display-5 d-block mb-2 text-secondary"></i>
+                                        Seu carrinho está vazio. Selecione produtos acima ou no catálogo!
+                                    </td>
+                                </tr>
+                                <tr th:each="item : ${itensCarrinho}">
+                                    <td class="ps-3">
+                                        <strong th:text="${item.nomeProduto}">Produto</strong>
+                                        <small class="text-muted d-block" th:text="'Código #' + ${item.produtoId}">#1</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary rounded-pill px-3" th:text="${item.quantidade}">1</span>
+                                    </td>
+                                    <td th:text="'R$ ' + ${#numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                                    <td class="fw-bold text-success" th:text="'R$ ' + ${#numbers.formatDecimal(item.precoUnitario * item.quantidade, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                                    <td class="text-end pe-3">
+                                        <a th:href="@{/carrinho/remover/{id}(id=${item.produtoId})}" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x-lg"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot th:if="${!#lists.isEmpty(itensCarrinho)}" class="table-light">
+                                <tr>
+                                    <td colspan="3" class="ps-3 fw-bold text-end">Total do Pedido:</td>
+                                    <td colspan="2" class="fw-bold fs-5 text-success" th:text="'R$ ' + ${#numbers.formatDecimal(valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Finalizar Compra & Integração Banco Tranquilo -->
+            <div class="col-lg-5">
+                <div class="card card-custom p-4 bg-white border-top border-4 border-success">
+                    <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+                        <div class="bg-success-subtle text-success p-3 rounded-circle fs-3">
+                            <i class="bi bi-bank2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Integração de Pagamentos</h5>
+                            <small class="text-muted">API Plataforma de Pagamentos — <strong>Banco Tranquilo</strong></small>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/carrinho/finalizar}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Nome Completo do Cliente <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" name="nomeCliente" class="form-control"
+                                       th:value="${nomeSugestao != null and !nomeSugestao.isEmpty() ? nomeSugestao : 'Leandro Guarido de Oliveira'}"
+                                       placeholder="Nome do comprador" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">E-mail para Confirmação de Pagamento <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                                <input type="email" name="emailCliente" class="form-control"
+                                       th:value="${emailSugestao != null and !emailSugestao.isEmpty() ? emailSugestao : 'cliente@mercadoexpress.com.br'}"
+                                       placeholder="cliente@email.com" required>
+                            </div>
+                            <small class="text-muted">Se confirmado pelo Banco Tranquilo, o aviso será enviado e salvo no PostgreSQL.</small>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">CPF do Cliente</label>
+                                <input type="text" name="cpfCliente" class="form-control" value="123.456.789-00" placeholder="000.000.000-00">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Método de Pagamento <span class="text-danger">*</span></label>
+                                <select name="metodoPagamento" class="form-select" required>
+                                    <option value="PIX">PIX (Aprovação Imediata)</option>
+                                    <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                                    <option value="CARTAO_DEBITO">Cartão de Débito</option>
+                                    <option value="BOLETO">Boleto Bancário</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Número do Cartão (Opcional / Teste Banco Tranquilo)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                <input type="text" name="numeroCartao" class="form-control" value="5432 1098 7654 4589"
+                                       placeholder="Final 0000 simula recusa no Banco Tranquilo">
+                            </div>
+                            <small class="text-muted">Dica: Final <code>0000</code> simula pagamento recusado pela API do Banco Tranquilo.</small>
+                        </div>
+
+                        <div class="p-3 rounded bg-light border mb-3 small">
+                            <div class="fw-bold text-dark mb-1"><i class="bi bi-hdd-network text-primary me-1"></i> Rota de Mensageria RabbitMQ:</div>
+                            <div><strong>Exchange:</strong> <code th:text="${exchangeName}">mercado.banco.exchange</code></div>
+                            <div><strong>Queue Req:</strong> <code th:text="${queueReq}">banco.tranquilo.pagamento.requisicao.queue</code></div>
+                            <div><strong>Queue Resp:</strong> <code th:text="${queueResp}">banco.tranquilo.pagamento.resposta.queue</code></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm"
+                                th:disabled="${#lists.isEmpty(itensCarrinho)}">
+                            <i class="bi bi-check2-circle me-1"></i>
+                            Finalizar Compra (<span th:text="'R$ ' + ${#numbers.formatDecimal(valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

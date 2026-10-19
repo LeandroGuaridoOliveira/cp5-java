@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard da Gerência - Mercado Express &amp; Banco Tranquilo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="container my-4 main-content">
+        <!-- Cabeçalho do Dashboard Gerencial -->
+        <div class="p-4 mb-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, #0b2e13 0%, #1b4332 60%, #2d6a4f 100%);">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge bg-warning text-dark fw-bold">
+                            <i class="bi bi-graph-up-arrow me-1"></i> Dashboard Gerencial (CP5 Parte 2)
+                        </span>
+                        <span class="badge bg-info text-dark fw-bold">
+                            <i class="bi bi-hdd-network me-1"></i> RabbitMQ + API Banco Tranquilo
+                        </span>
+                        <span class="badge bg-light text-dark fw-bold">
+                            <i class="bi bi-database-check me-1"></i> PostgreSQL
+                        </span>
+                    </div>
+                    <h2 class="fw-bold mb-1">Painel Executivo — Gerência do Mercado Express</h2>
+                    <p class="mb-0 text-light opacity-75 small">
+                        Monitoramento em tempo real de vendas aprovadas pelo <strong>Banco Tranquilo</strong>, margem de lucro, nível de estoque e auditoria de e-mails enviados aos clientes.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0 d-flex flex-wrap justify-content-lg-end gap-2">
+                    <a th:href="@{/carrinho}" class="btn btn-warning fw-bold text-dark">
+                        <i class="bi bi-cart-plus-fill me-1"></i> Nova Compra (Checkout)
+                    </a>
+                    <a href="http://localhost:15672" target="_blank" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> RabbitMQ Dashboard (:15672)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards de KPIs Executivos -->
+        <div class="row g-3 mb-4">
+            <!-- Receita Total -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-custom h-100 p-3 bg-white border-start border-4 border-success">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Faturamento Aprovado</small>
+                            <h3 class="fw-bold text-success mb-0" th:text="'R$ ' + ${#numbers.formatDecimal(receitaTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</h3>
+                            <small class="text-muted" th:text="${totalAprovadas} + ' compras confirmadas'">0 compras</small>
+                        </div>
+                        <div class="bg-success-subtle text-success p-3 rounded-circle fs-3">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lucro Estimado -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-custom h-100 p-3 bg-white border-start border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Lucro Líquido Estimado (35%)</small>
+                            <h3 class="fw-bold text-primary mb-0" th:text="'R$ ' + ${#numbers.formatDecimal(lucroTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</h3>
+                            <small class="text-muted">Liquidação via Banco Tranquilo</small>
+                        </div>
+                        <div class="bg-primary-subtle text-primary p-3 rounded-circle fs-3">
+                            <i class="bi bi-piggy-bank-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estoque Total -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-custom h-100 p-3 bg-white border-start border-4 border-warning">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Unidades em Estoque</small>
+                            <h3 class="fw-bold text-dark mb-0" th:text="${estoqueTotalItens} + ' un.'">0 un.</h3>
+                            <small class="text-muted" th:text="'Valor: R$ ' + ${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}">Valor</small>
+                        </div>
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle fs-3">
+                            <i class="bi bi-boxes"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E-mails Enviados -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-custom h-100 p-3 bg-white border-start border-4 border-info">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">E-mails Confirmados (BD)</small>
+                            <h3 class="fw-bold text-info mb-0" th:text="${totalEmails}">0</h3>
+                            <small class="text-muted">Tabela TDS_TB_Emails_Enviados</small>
+                        </div>
+                        <div class="bg-info-subtle text-info p-3 rounded-circle fs-3">
+                            <i class="bi bi-envelope-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Gráficos (Vendas, Lucros e Estoque) -->
+        <div class="row g-4 mb-4">
+            <!-- Gráfico 1: Vendas x Lucros por Transação -->
+            <div class="col-lg-7">
+                <div class="card card-custom p-4 bg-white h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-bar-chart-steps text-success me-2"></i>Gráfico de Vendas vs. Lucros (R$)
+                        </h5>
+                        <span class="badge bg-success-subtle text-success">Banco Tranquilo</span>
+                    </div>
+                    <div style="height: 290px;">
+                        <canvas id="chartVendasLucros"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico 2: Vendas por Método de Pagamento -->
+            <div class="col-lg-5">
+                <div class="card card-custom p-4 bg-white h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-pie-chart-fill text-primary me-2"></i>Receita por Meio de Pagamento
+                        </h5>
+                        <span class="badge bg-primary-subtle text-primary">PIX / Cartão / Boleto</span>
+                    </div>
+                    <div style="height: 290px;">
+                        <canvas id="chartMetodosPagamento"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico 3: Nível de Estoque por Produto -->
+            <div class="col-lg-7">
+                <div class="card card-custom p-4 bg-white h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-box-seam-fill text-warning me-2"></i>Controle de Estoque por Produto (Unidades)
+                        </h5>
+                        <span class="badge bg-warning-subtle text-dark">TDS_Sec_MVC_TB_Mercado</span>
+                    </div>
+                    <div style="height: 290px;">
+                        <canvas id="chartEstoqueProdutos"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico 4: Distribuição de Estoque por Setor -->
+            <div class="col-lg-5">
+                <div class="card card-custom p-4 bg-white h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-diagram-2-fill text-info me-2"></i>Estoque por Setor do Mercado
+                        </h5>
+                        <span class="badge bg-info-subtle text-dark">Setores</span>
+                    </div>
+                    <div style="height: 290px;">
+                        <canvas id="chartEstoqueSetor"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Compras Realizadas (Integração Banco Tranquilo) -->
+        <div class="card card-custom overflow-hidden bg-white mb-4">
+            <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-credit-card-2-front-fill text-success me-2"></i>Compras Realizadas &amp; Transações Banco Tranquilo
+                    </h5>
+                    <small class="text-muted">Tabela PostgreSQL: <code>TDS_TB_Compras_Mercado</code> | Exchange: <code th:text="${exchangeName}"></code></small>
+                </div>
+                <a th:href="@{/api/compras}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-filetype-json me-1"></i> Ver JSON (/api/compras)
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Transação</th>
+                            <th>Cliente / E-mail</th>
+                            <th>Itens Comprados</th>
+                            <th>Método</th>
+                            <th>Valor Total</th>
+                            <th>Lucro</th>
+                            <th>Protocolo Banco</th>
+                            <th>Status</th>
+                            <th class="text-center pe-3">E-mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${compras}">
+                            <td class="ps-3">
+                                <a th:href="@{/carrinho/comprovante/{cod}(cod=${c.codigoTransacao})}" class="fw-bold text-decoration-none" th:text="${c.codigoTransacao}">TRX</a>
+                                <small class="text-muted d-block" th:text="${#temporals.format(c.dataCompra, 'dd/MM/yyyy HH:mm')}">Data</small>
+                            </td>
+                            <td>
+                                <strong class="d-block text-dark" th:text="${c.nomeCliente}">Cliente</strong>
+                                <small class="text-muted" th:text="${c.emailCliente}">email</small>
+                            </td>
+                            <td>
+                                <small class="text-dark" th:text="${c.itensResumo}">Itens</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary" th:text="${c.metodoPagamento}">PIX</span>
+                            </td>
+                            <td class="fw-bold text-success" th:text="'R$ ' + ${#numbers.formatDecimal(c.valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                            <td class="fw-semibold text-primary" th:text="'R$ ' + ${#numbers.formatDecimal(c.lucroEstimado, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                            <td>
+                                <code class="text-dark fw-bold" th:text="${c.protocoloBanco != null ? c.protocoloBanco : '-'}">BT-000</code>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${c.statusPagamento.name() == 'APROVADO' ? 'bg-success' : (c.statusPagamento.name() == 'RECUSADO' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                      th:text="${c.statusPagamento}">APROVADO</span>
+                            </td>
+                            <td class="text-center pe-3">
+                                <span th:if="${c.emailEnviado}" class="badge bg-info text-dark" title="E-mail enviado e salvo no BD">
+                                    <i class="bi bi-envelope-check-fill me-1"></i>Enviado
+                                </span>
+                                <span th:if="${!c.emailEnviado}" class="badge bg-secondary">Não aplicável</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tabela de Auditoria de E-mails Enviados no PostgreSQL -->
+        <div class="card card-custom overflow-hidden bg-white">
+            <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-envelope-paper-heart-fill text-primary me-2"></i>Controle de Envio de E-mails para Clientes (PostgreSQL)
+                    </h5>
+                    <small class="text-muted">Tabela PostgreSQL: <code>TDS_TB_Emails_Enviados</code> — Registro de avisos de confirmação de pagamento</small>
+                </div>
+                <a th:href="@{/api/emails}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-filetype-json me-1"></i> Ver JSON (/api/emails)
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">ID</th>
+                            <th>Transação</th>
+                            <th>Destinatário</th>
+                            <th>Assunto do E-mail</th>
+                            <th>Status no BD</th>
+                            <th class="pe-3">Data / Hora de Envio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e : ${emails}">
+                            <td class="ps-3 fw-bold text-secondary" th:text="'#' + ${e.id}">#1</td>
+                            <td><code th:text="${e.codigoTransacao}">TRX</code></td>
+                            <td>
+                                <strong class="d-block text-dark" th:text="${e.nomeCliente}">Cliente</strong>
+                                <span class="small text-primary" th:text="${e.destinatario}">email</span>
+                            </td>
+                            <td>
+                                <span class="fw-semibold text-dark d-block" th:text="${e.assunto}">Assunto</span>
+                                <small class="text-muted" th:text="${e.detalheTecnico}">Detalhe</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle" th:text="${e.statusEnvio}">ENVIADO</span>
+                            </td>
+                            <td class="pe-3 small text-muted" th:text="${#temporals.format(e.dataEnvio, 'dd/MM/yyyy HH:mm:ss')}">Data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        const labelsTransacoes = /*[[${labelsTransacoes}]]*/ [];
+        const valoresVenda = /*[[${valoresVendaTransacao}]]*/ [];
+        const valoresLucro = /*[[${valoresLucroTransacao}]]*/ [];
+
+        const metodosLabels = /*[[${metodosLabels}]]*/ [];
+        const metodosValores = /*[[${metodosValores}]]*/ [];
+
+        const nomesProdutos = /*[[${nomesProdutos}]]*/ [];
+        const estoquesProdutos = /*[[${estoquesProdutos}]]*/ [];
+
+        const setoresLabels = /*[[${setoresLabels}]]*/ [];
+        const setoresEstoque = /*[[${setoresEstoque}]]*/ [];
+
+        // 1. Gráfico de Vendas vs Lucros
+        new Chart(document.getElementById('chartVendasLucros'), {
+            type: 'bar',
+            data: {
+                labels: labelsTransacoes,
+                datasets: [
+                    {
+                        label: 'Valor da Venda (R$)',
+                        data: valoresVenda,
+                        backgroundColor: 'rgba(25, 135, 84, 0.8)',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Lucro Líquido (R$)',
+                        data: valoresLucro,
+                        backgroundColor: 'rgba(13, 110, 253, 0.8)',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } }
+            }
+        });
+
+        // 2. Gráfico de Métodos de Pagamento
+        new Chart(document.getElementById('chartMetodosPagamento'), {
+            type: 'doughnut',
+            data: {
+                labels: metodosLabels,
+                datasets: [{
+                    data: metodosValores,
+                    backgroundColor: ['#198754', '#0d6efd', '#ffc107', '#6c757d', '#20c997']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // 3. Gráfico de Estoque por Produto
+        new Chart(document.getElementById('chartEstoqueProdutos'), {
+            type: 'bar',
+            data: {
+                labels: nomesProdutos,
+                datasets: [{
+                    label: 'Unidades em Estoque',
+                    data: estoquesProdutos,
+                    backgroundColor: 'rgba(255, 193, 7, 0.85)',
+                    borderColor: '#ffc107',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 4. Gráfico de Estoque por Setor
+        new Chart(document.getElementById('chartEstoqueSetor'), {
+            type: 'polarArea',
+            data: {
+                labels: setoresLabels,
+                datasets: [{
+                    data: setoresEstoque,
+                    backgroundColor: [
+                        'rgba(13, 202, 240, 0.7)',
+                        'rgba(25, 135, 84, 0.7)',
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(220, 53, 69, 0.7)',
+                        'rgba(102, 16, 242, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+</body>
+</html>

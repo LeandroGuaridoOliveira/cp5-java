@@ -27,3 +27,13 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
+
+app:
+  mail:
+    enabled: false
+
