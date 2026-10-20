@@ -30,9 +30,9 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/produtos", "/produtos/detalhes/**").permitAll()
-                .requestMatchers("/carrinho/**").permitAll()
+                .requestMatchers("/carrinho", "/carrinho/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico", "/error").permitAll()
                 .requestMatchers("/login", "/registro").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/area-restrita/**", "/dashboard-gerencia/**").authenticated()

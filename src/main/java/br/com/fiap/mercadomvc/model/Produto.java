@@ -53,7 +53,7 @@ public class Produto {
     @Column(name = "PRECO", nullable = false)
     private Double preco;
 
-    @Column(name = "ESTOQUE", nullable = false)
+    @Column(name = "ESTOQUE")
     private Integer estoque = 50;
 
     public Produto() {
@@ -131,7 +131,7 @@ public class Produto {
     }
 
     public Integer getEstoque() {
-        return estoque != null ? estoque : 0;
+        return estoque != null ? estoque : 50;
     }
 
     public void setEstoque(Integer estoque) {
