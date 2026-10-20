@@ -88,8 +88,8 @@ public class DatabaseSeeder implements CommandLineRunner {
 
             Compra c2 = new Compra();
             c2.setCodigoTransacao("TRX-CP5002B");
-            c2.setNomeCliente("Kaiky Costa");
-            c2.setEmailCliente("kaiky.costa@fiap.com.br");
+            c2.setNomeCliente("Kaiky Pereira Rodrigues Da Silva");
+            c2.setEmailCliente("kaiky.rodrigues@fiap.com.br");
             c2.setCpfCliente("234.567.890-11");
             c2.setMetodoPagamento("CARTAO_CREDITO");
             c2.setNumeroCartaoFinal("4589");

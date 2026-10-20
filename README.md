@@ -14,7 +14,7 @@ Projeto desenvolvido para o **Checkpoint 5 (Parte 1 e Parte 2)** da disciplina d
 - **IDE Utilizada**: IntelliJ IDEA
 - **Integrantes**:
   1. Leandro Guarido de Oliveira — RM: 561760
-  2. Kaiky Costa — RM: 564578
+  2. Kaiky Pereira Rodrigues Da Silva — RM: 564578
   3. Gabriel Costa Solano — RM: 562325
 
 ---

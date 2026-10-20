@@ -55,7 +55,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nomeCliente\": \"Kaiky Costa\",\n  \"emailCliente\": \"kaiky.costa@fiap.com.br\",\n  \"cpfCliente\": \"234.567.890-11\",\n  \"metodoPagamento\": \"CARTAO_CREDITO\",\n  \"numeroCartao\": \"5432 1098 7654 4589\",\n  \"itens\": [\n    {\n      \"produtoId\": 6,\n      \"quantidade\": 1\n    },\n    {\n      \"produtoId\": 4,\n      \"quantidade\": 3\n    }\n  ]\n}"
+          "raw": "{\n  \"nomeCliente\": \"Kaiky Pereira Rodrigues Da Silva\",\n  \"emailCliente\": \"kaiky.rodrigues@fiap.com.br\",\n  \"cpfCliente\": \"234.567.890-11\",\n  \"metodoPagamento\": \"CARTAO_CREDITO\",\n  \"numeroCartao\": \"5432 1098 7654 4589\",\n  \"itens\": [\n    {\n      \"produtoId\": 6,\n      \"quantidade\": 1\n    },\n    {\n      \"produtoId\": 4,\n      \"quantidade\": 3\n    }\n  ]\n}"
         },
         "url": {
           "raw": "http://localhost:8082/api/compras",
