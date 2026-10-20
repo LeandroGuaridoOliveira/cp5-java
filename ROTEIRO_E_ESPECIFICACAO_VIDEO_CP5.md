@@ -9,6 +9,7 @@
 
 **Repositório Oficial:** `https://github.com/LeandroGuaridoOliveira/cp5-java.git`  
 **Deploy em Produção (Render):** `https://mercado-express-mvc-90ft.onrender.com`  
+**Vídeo Demonstrativo (YouTube):** `https://youtu.be/eCYKxEs_vws`  
 **Duração Alvo do Vídeo:** **5 a 7 minutos** (Critério eliminatório da rubrica).
 
 ---

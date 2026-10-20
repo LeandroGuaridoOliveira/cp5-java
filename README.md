@@ -24,6 +24,7 @@ Projeto desenvolvido para o **Checkpoint 5 (Parte 1 e Parte 2)** da disciplina d
 - **Repositório GitHub**: [https://github.com/LeandroGuaridoOliveira/cp5-java.git](https://github.com/LeandroGuaridoOliveira/cp5-java.git)
 - **Deploy em Produção**: [https://mercado-express-mvc-90ft.onrender.com](https://mercado-express-mvc-90ft.onrender.com)
 - **Plataforma de Hospedagem**: Render (Web Service conteinerizado com Docker)
+- **Vídeo Demonstrativo (YouTube - 5 a 7 min)**: [https://youtu.be/eCYKxEs_vws](https://youtu.be/eCYKxEs_vws)
 
 ---
 
